@@ -22,7 +22,7 @@ st.set_page_config(  # Alternate names: setup_page, page, layout
     layout="wide",  # Can be "centered" or "wide". In the future also "dashboard", etc.
     initial_sidebar_state="auto",  # Can be "auto", "expanded", "collapsed"
     page_title="QAF",  # String or None. Strings get appended with "• Streamlit". 
-    page_icon= './images/QAF.png',  # String, anything supported by st.image, or None.
+    page_icon= 'QAF.png',  # String, anything supported by st.image, or None.
 )
 
 
@@ -65,9 +65,11 @@ def main():
         #st.write('plotly:', plotly.__version__)
         #st.write('Fundamentus:', fundamentus.__version__)
         st.write('Feito com Carinho')
-        st.write('Roberto Carlos Ricci')
-        st.write('pbisolucoes@gmail.com')
-        st.write('https://bit.ly/lirobertocarlosricci')
+        st.markdown("- Roberto Carlos Ricci")
+        st.markdown("- <a href='mailto:pbisolucoes@gmail.com' target='_blank'><img src='https://img.shields.io/badge/Gmail-D14836?style=flat-square&logo=gmail&logoColor=white' target='_blank'> </a> ", unsafe_allow_html=True)
+        st.markdown("- [![Linkedin Badge](https://img.shields.io/badge/-%40robertoricci-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://bit.ly/lirobertocarlosricci)](https://bit.ly/lirobertocarlosricci)")
+
+        #st.write('https://bit.ly/lirobertocarlosricci')
        
 if 'portifolio' not in st.session_state:
         st.session_state.portifolio = pd.DataFrame()
