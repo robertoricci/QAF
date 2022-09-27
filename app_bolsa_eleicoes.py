@@ -31,7 +31,6 @@ def bolsa():
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 """,unsafe_allow_html=True
     ) 
-    
     st.title('Análise Bolsa de Valores nas ultimas eleições presidencias')
 
     df = puxar_dados('^BVSP','1998-01-01','2022-09-30')
@@ -116,8 +115,7 @@ def gerar_grafico(tab):
     )
     fig.add_vline( x= pd.to_datetime('2022-10-01').dayofyear ,line_dash="dash",line_color="blue")
     fig.add_vline( x= pd.to_datetime('2022-10-31').dayofyear, line_dash="dash",line_color="blue")
-    fig.update_traces(line=dict(width=1)
-                      
+    fig.update_traces(line=dict(width=1)                
     )
     
     fig.add_scatter(
@@ -133,11 +131,10 @@ def gerar_grafico(tab):
     
     fig.layout.yaxis.tickformat = '.0%'
     
-
     fig.update_layout(title='Performance Indice Bovespa (IBOV) no anos eleitorias [1998,2002,2006,2014,2018 e 2022]',
-                   xaxis_title='Dia do Ano',
-                   yaxis_title='Retorno',
-                   template='plotly_dark')
+                      xaxis_title='Dia do Ano',
+                      yaxis_title='Retorno',
+                      template='plotly_dark')
 
     st.plotly_chart(fig,use_container_width=True)
 
@@ -147,12 +144,12 @@ def gerar_grafico(tab):
     
     col1, col2 = st.columns(2)
     with col1:
-        ticker = st.selectbox('Escolha o Ativo (Clique no campo e digite as iniciais do Ticker)',st.session_state.tabela_papeis['Ticker'])
+        ticker = st.selectbox('Escolha o Ativo e click no botão buscar (Clique no campo e digite as iniciais do Ativo)',st.session_state.tabela_papeis['Ticker'])
     
     with col2:
         st.write('')
         st.write('')
-        bt_calc = st.button('Listar')
+        bt_calc = st.button('Buscar')
 
    
     if bt_calc:
