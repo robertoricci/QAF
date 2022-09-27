@@ -17,7 +17,7 @@ def home():
     st.markdown("<h4 style='text-align: center; color: rgb(74, 113, 152);;'>Análise de Ativo(s) nos anos de eleições presidencias</h4>", unsafe_allow_html=True)
     st.markdown("")
     col1, col2, col3, col4, col5  = st.columns([0.1,1,0.01,1,0.1])
-    col2.image('./images/eleicoes.jpg')
+    col2.image('eleicoes.jpg')
     # col4.markdown("")
     # col4.markdown("<h5 style='text-align: left; color: black;'>- Inserir os ativos da sua carteira.</h5>", unsafe_allow_html=True)
     # col4.markdown("<h5 style='text-align: left; color: black;'>- Calcular o BETA e ver as informações sobre Hedge.</h5>", unsafe_allow_html=True)

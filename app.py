@@ -88,7 +88,7 @@ def page_bolsa_eleicoes():
     
 @st.cache
 def puxar_tabela_papeis():
-    return pd.read_csv('./dados/tickers.csv')
+    return pd.read_csv('tickers.csv')
 
 
   
