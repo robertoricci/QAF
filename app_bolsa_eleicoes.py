@@ -86,10 +86,26 @@ def gerar_grafico_unid(tab,ticker):
     
     anos = anos + [2022]
 
-    fig.update_layout(title='Performance do Ativo '+ ticker + ' nos anos eleitorais ' + str(anos),
-                   xaxis_title='Dia do Ano',
-                   yaxis_title='Retorno',
-                   template='plotly_dark')
+    fig.update_layout(
+        title='Performance do Ativo '+ ticker + ' nos anos eleitorais ' + str(anos),
+        xaxis_title='Dia do Ano',
+        yaxis_title='Retorno',
+        template='plotly_dark',
+        xaxis=dict(
+            showline=True,
+            showgrid=False,
+            showticklabels=True,
+        ),
+        yaxis=dict(
+            showgrid=False,
+            zeroline=False,
+            showline=True,
+            showticklabels=True,
+            tickformat = '.0%'
+        )
+        
+    )
+    
     st.plotly_chart(fig,use_container_width=True)   
     
 @st.cache(allow_output_mutation=True)
@@ -128,13 +144,26 @@ def gerar_grafico(tab):
     
     fig.update_traces( hovertemplate='<b>Retorno: </b> %{y:.0%}'+
                                        '<br><b>Dia Ano:</b> %{x:}')
-    
-    fig.layout.yaxis.tickformat = '.0%'
-    
-    fig.update_layout(title='Performance Indice Bovespa (IBOV) no anos eleitorias [1998,2002,2006,2014,2018 e 2022]',
-                      xaxis_title='Dia do Ano',
-                      yaxis_title='Retorno',
-                      template='plotly_dark')
+
+    fig.update_layout(
+        title='Performance Indice Bovespa (IBOV) no anos eleitorias [1998,2002,2006,2014,2018 e 2022]',
+        xaxis_title='Dia do Ano',
+        yaxis_title='Retorno',
+        template='plotly_dark',
+        xaxis=dict(
+            showline=True,
+            showgrid=False,
+            showticklabels=True,
+        ),
+        yaxis=dict(
+            showgrid=False,
+            zeroline=False,
+            showline=True,
+            showticklabels=True,
+            tickformat = '.0%'
+        )
+        
+    )
 
     st.plotly_chart(fig,use_container_width=True)
 
@@ -144,7 +173,7 @@ def gerar_grafico(tab):
     
     col1, col2 = st.columns(2)
     with col1:
-        ticker = st.selectbox('Escolha o Ativo e click no botão buscar (Clique no campo e digite as iniciais do Ativo)',st.session_state.tabela_papeis['Ticker'])
+        ticker = st.selectbox('Escolha o Ativo(Clique no campo e digite as iniciais do Ativo)',st.session_state.tabela_papeis['Ticker'])
     
     with col2:
         st.write('')
