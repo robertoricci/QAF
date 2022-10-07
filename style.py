@@ -65,6 +65,10 @@ def sidebarwidth():
             width: 250px;
             margin-left: -500px;
         }
+        .st-c9:hover {
+         color: rgb(14, 121, 228);
+        }
+       
         </style>
         """,
         unsafe_allow_html=True,
@@ -89,3 +93,22 @@ def font_google():
         """,
             unsafe_allow_html=True,
         )
+    
+def button():
+    butttom = '''
+    <style>
+    .stButton > button{
+        color: #ffffff;
+        background-color: rgb(74, 113, 152);
+    }
+   .stButton > button:hover{
+        color: #ffffff;
+        background-color: rgb(14, 121, 228);
+        border-color: rgb(85, 115, 146);
+    }
+    .svg:hover {
+        fill: rgb(14, 121, 228);;
+    }
+    </style>
+    '''
+    st.markdown(butttom, unsafe_allow_html=True)

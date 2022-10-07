@@ -2,6 +2,8 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 import plotly.express as px
+import style as style
+from datetime import datetime
 #import numpy as np
 #import pandas as pd
 # import yfinance as yf
@@ -24,6 +26,7 @@ import plotly.express as px
 # )
 
 def bolsa():
+    style.button()
          #código para ativar bootstrap css
     st.markdown(
 """
@@ -33,7 +36,7 @@ def bolsa():
     ) 
     st.title('Análise Bolsa de Valores nas ultimas eleições presidencias')
 
-    df = puxar_dados('^BVSP','1998-01-01','2022-09-30')
+    df = puxar_dados('^BVSP','1998-01-01',datetime.today().strftime('%Y-%m-%d'))
     
     df['ano'] = df.index.year
     df['dia_do_ano'] = df.index.dayofyear
@@ -179,10 +182,11 @@ def gerar_grafico(tab):
         st.write('')
         st.write('')
         bt_calc = st.button('Buscar')
-
+     
+     
    
     if bt_calc:
-        df = puxar_dados(ticker + '.SA','1998-01-01','2022-09-30')
+        df = puxar_dados(ticker + '.SA','1998-01-01',datetime.today().strftime('%Y-%m-%d'))
         df['ano'] = df.index.year
         df['dia_do_ano'] = df.index.dayofyear
 
