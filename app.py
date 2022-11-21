@@ -3,8 +3,9 @@ import style as style
 import app_home
 import app_carteira
 import app_bolsa_eleicoes
+import app_analise_tecnica
+import app_analise_fundamentalista
 import pandas as pd
-
 
 import matplotlib
 matplotlib.use('Agg')
@@ -32,10 +33,13 @@ def local_css(file_name):
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
     
     
-def main(): 
+def main():
+     
     pages={
          "Home":page_home,
-          "Eleições":page_bolsa_eleicoes
+          "Eleições":page_bolsa_eleicoes,
+          "Análise técnica":page_analise_tecnica,
+          "Análise Fundamentalista":page_analise_fundamentalista
     }
     
         #esconder botão de menu e marca dágua no rodapé
@@ -45,8 +49,8 @@ def main():
            
     with st.sidebar:
             style.sidebarwidth() 
-            page = option_menu('Menu', ["Home","Eleições"],
-                                icons=['house','cash-coin'],
+            page = option_menu('Menu', ["Home","Análise técnica","Análise Fundamentalista","Eleições"],
+                                icons=['house','bar-chart','bullseye','cash-coin'],
                                 default_index=0, menu_icon="app-indicator",   #orientation='horizontal',
                                 styles={
                 "container": {"padding": "2!important", "background-color": "#ffffff","margin": "0px" }, # ,"background-size": "cover","margin": "0px"},
@@ -76,16 +80,18 @@ if 'portifolio' not in st.session_state:
 def page_home():
      app_home.home()
 
-def page_carteira():
-     app_carteira.carteira()
+def page_analise_tecnica():
+     app_analise_tecnica.analise_tecnica_fundamentalista()
 
+def page_analise_fundamentalista():
+    app_analise_fundamentalista.carregar_ativos()
 
 def page_bolsa_eleicoes():
      st.session_state.tabela_papeis = puxar_tabela_papeis()
      app_bolsa_eleicoes.bolsa()
- 
-  
-    
+     
+     
+
 @st.cache
 def puxar_tabela_papeis():
     return pd.read_csv('tickers.csv')

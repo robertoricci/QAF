@@ -169,7 +169,6 @@ def gerar_grafico(tab):
     )
 
     st.plotly_chart(fig,use_container_width=True)
-
     st.header('Análise da perfomance de um único ativo')
 
     st.write('')
