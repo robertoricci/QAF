@@ -83,6 +83,6 @@ yfinance==0.1.74
 zipp==3.8.1
 pymongo
 SQLAlchemy
-mysql
 mysql-connector-python
+mysqlclient
 

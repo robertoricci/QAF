@@ -5,6 +5,8 @@ import pymongo
 import pandas as pd
 import mysql
 import sqlalchemy as sql
+##from sqlalchemy import create_engine, text
+import pandas as pd
 
 def home():
     
@@ -16,6 +18,9 @@ def home():
     #col2.image('./imagen/analisequant_logo-removebg.png')
     
     st.write( 'lendo-secrets dddddddd')
+    
+    print(st.secrets["mongo"]["url"])
+    st.write( 'lendo-secrets mongo' + st.secrets["mongo"]["url"])
     
     load_dotenv()
     
@@ -97,10 +102,10 @@ def home():
         
     print('testand outro meio')
     
-    query = 'SELECT * FROM ibov_b3'
+    query = sql.text('SELECT * FROM ibov_b3')
     sql_conn = sql.create_engine(desenv_db)
-    ##df = sql_conn.query(query,ttl=600)
-    df = pd.read_sql(query, sql_conn)
+    conn = sql_conn.connect()
+    df = pd.read_sql_query(query, conn)
     st.write(df)
 
 
