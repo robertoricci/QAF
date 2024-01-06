@@ -65,7 +65,6 @@ def home():
     
     st.write( 'conexão mysql via conection') 
     
-    conn = st.connection("desenv_db", "sql")
     
     try:   
            query = 'SELECT * FROM ibov_b3'
