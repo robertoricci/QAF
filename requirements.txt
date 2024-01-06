@@ -81,8 +81,11 @@ wsproto==1.2.0
 yahooquery==2.2.15
 yfinance==0.1.74
 zipp==3.8.1
+<<<<<<< HEAD
 pymongo
 SQLAlchemy
 mysql
 mysql-connector-python
+=======
+>>>>>>> 86d60609d407b2b1db81815d06aa225278524827
 
