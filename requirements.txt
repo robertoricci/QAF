@@ -40,7 +40,7 @@ plotly-express==0.4.1
 protobuf==3.20.1
 pyarrow==9.0.0
 pycparser==2.21
-pydeck==0.8.0b3
+pydeck
 Pygments==2.13.0
 Pympler==1.0.1
 pyparsing==3.0.9
