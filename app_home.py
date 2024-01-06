@@ -19,9 +19,7 @@ def home():
     #col2.image('./imagen/analisequant_logo-removebg.png')
     
     st.write( 'lendo-secrets dddddddd')
-    
-    print(st.secrets["mongo"]["url"])
-    st.write( 'lendo-secrets mongo' + st.secrets["mongo"]["url"])
+  
     
     load_dotenv()
     
@@ -44,15 +42,9 @@ def home():
     except :
         print('erro conectar monngo')
     
-  
-    st.write( 'lendo-env mong')
-    mongo_db = os.environ.get("MONGO_CONN") 
-    print(mongo_db)
-    
-    
     try:
   
-        client = pymongo.MongoClient(mongo_db)  
+        client = pymongo.MongoClient(st.secrets["mongo"]["url"])  
         db = client["libraryDB"]
         stock = db["stocks"]
 
@@ -87,18 +79,7 @@ def home():
     st.write( 'testando com .env') 
     desenv_db = os.environ.get("MYSQL_CONN") 
     st.write( 'conexão mysql via conection '+desenv_db) 
-    print(desenv_db)
-        
-    # try:  
-    #         st.write( 'conexão mysql') 
-       
-    #         query = 'SELECT * FROM ibov_b3'
-    #         conn = st.connection(desenv_db, "sql")
-    #         df = conn.query(query,ttl=600)
-    #         st.write(df)
-           
-    # except:
-    #     print('erro conectar bd via env')
+   
         
     st.write('testando outro meio mysql')
         
