@@ -81,3 +81,4 @@ wsproto==1.2.0
 yahooquery==2.2.15
 yfinance==0.1.74
 zipp==3.8.1
+
