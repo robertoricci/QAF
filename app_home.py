@@ -1,13 +1,111 @@
 import streamlit as st
-
-
+from dotenv import load_dotenv 
+import os
+import pymongo
+import pandas as pd
+import mysql
+import sqlalchemy as sql
 
 def home():
+    
+    
     
     st.title('Bem Vindo ao Quant analysis of financial - QAF')
 
     col1, col2, col3 = st.columns([0.7,1,0.7])
     #col2.image('./imagen/analisequant_logo-removebg.png')
+    
+    st.write( 'lendo-secrets')
+    
+    load_dotenv()
+    
+    # try:
+      
+    #   client = pymongo.MongoClient(st.secrets["mongo"]["url"])  
+    #   db = client["libraryDB"]
+    #   stock = db["stocks"]
+
+    #   dados = stock.find_one({"index":'PETR4'})
+    #   if dados:
+    #         df = pd.DataFrame(dados["data"])
+    #         print(df.dtypes)
+    #         df['Date'] = pd.to_datetime(df['Date']).dt.date
+    #         ##df['Volume'] =  df['Volume'].astype(str)
+    #         df.set_index("Date",inplace=True)
+             
+    #         st.write( df)
+      
+    # except :
+    #     print('erro conectar monngo')
+    
+  
+    # st.write( 'lendo-env')
+    
+    
+ 
+    # try:
+    #   mongo_db = os.environ.get("MONGO_CONN") 
+    #   client = pymongo.MongoClient(mongo_db)  
+    #   db = client["libraryDB"]
+    #   stock = db["stocks"]
+
+    #   dados = stock.find_one({"index":'PETR4'})
+    #   if dados:
+    #         df = pd.DataFrame(dados["data"])
+    #         print(df.dtypes)
+    #         df['Date'] = pd.to_datetime(df['Date']).dt.date
+    #         ##df['Volume'] =  df['Volume'].astype(str)
+    #         df.set_index("Date",inplace=True)
+             
+    #         st.write( df)
+      
+    # except:
+    #     print('erro conectar monngo via env')
+    
+    
+    st.write( 'conexão mysql via conection') 
+    
+    conn = st.connection("desenv_db", "sql")
+    
+    try:   
+           query = 'SELECT * FROM ibov_b3'
+           st.write( 'conexão mysql') 
+           conn = st.connection("desenv_db", "sql")
+           df = conn.query(query,ttl=600)
+           st.write(df)
+    except:
+        print('erro conectar bd via secrets')
+        
+        
+    st.write( 'testando com .env') 
+    desenv_db = os.environ.get("MYSQL_CONN") 
+    print(desenv_db)
+        
+    try:  
+           st.write( 'conexão mysql') 
+       
+           query = 'SELECT * FROM ibov_b3'
+           conn = st.connection(desenv_db, "sql")
+           df = conn.query(query,ttl=600)
+           st.write(df)
+           
+    except:
+        print('erro conectar bd via env')
+        
+    st.white('testando outro meio mysql')
+        
+    print('testand outro meio')
+    
+    sql_conn = sql.create_engine(desenv_db)
+    ##df = sql_conn.query(query,ttl=600)
+    pd.read_sql(query, sql_conn)
+    st.write(df)
+
+
+    
+ 
+    
+  
 
     st.markdown("<h2 style='text-align: center; color: rgb(74, 113, 152);'> Portal de Análises Quant financeira, onde você poderá simular e análisar diversos ativos</h2>", unsafe_allow_html=True)
     st.markdown("<h4 style='text-align: center; color: rgb(74, 113, 152)'>ATENÇÃO - Análises feitas através de APIs públicas</h4>", unsafe_allow_html=True)

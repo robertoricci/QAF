@@ -64,3 +64,5 @@ ENV/
 
 app.sqlite
 app/local_settings.py
+.streamlit/secrets.toml
+/secrets.toml
