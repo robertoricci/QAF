@@ -10,7 +10,7 @@ import pandas as pd
 
 def home():
     
-    
+    ##mkdir .streamlit; cp /etc/secrets/secrets.toml ./.streamlit/; pip install -r requirements.txt
     
     st.title('Bem Vindo ao Quant analysis of financial - QAF')
 

@@ -6,4 +6,4 @@ port = $PORT\n\
 enableCORS = false\n\
 headless = true\n\
 \n\
-" > ~/.streamlit/secrets.toml > ~/.streamlit/config.toml
+" > ~/.streamlit/config.toml
