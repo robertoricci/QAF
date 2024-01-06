@@ -15,7 +15,7 @@ def home():
     col1, col2, col3 = st.columns([0.7,1,0.7])
     #col2.image('./imagen/analisequant_logo-removebg.png')
     
-    st.write( 'lendo-secrets')
+    st.write( 'lendo-secrets dddddddd')
     
     load_dotenv()
     
@@ -39,65 +39,68 @@ def home():
         print('erro conectar monngo')
     
   
-    st.write( 'lendo-env')
+    st.write( 'lendo-env mong')
+    mongo_db = os.environ.get("MONGO_CONN") 
+    print(mongo_db)
     
     
- 
-    try:
-      mongo_db = os.environ.get("MONGO_CONN") 
-      client = pymongo.MongoClient(mongo_db)  
-      db = client["libraryDB"]
-      stock = db["stocks"]
+    ##try:
+  
+    client = pymongo.MongoClient(mongo_db)  
+    db = client["libraryDB"]
+    stock = db["stocks"]
 
-      dados = stock.find_one({"index":'PETR4'})
-      if dados:
-            df = pd.DataFrame(dados["data"])
-            print(df.dtypes)
-            df['Date'] = pd.to_datetime(df['Date']).dt.date
-            ##df['Volume'] =  df['Volume'].astype(str)
-            df.set_index("Date",inplace=True)
-             
-            st.write( df)
-      
-    except:
-        print('erro conectar monngo via env')
+    dados = stock.find_one({"index":'PETR4'})
+    if dados:
+        df = pd.DataFrame(dados["data"])
+        print(df.dtypes)
+        df['Date'] = pd.to_datetime(df['Date']).dt.date
+        ##df['Volume'] =  df['Volume'].astype(str)
+        df.set_index("Date",inplace=True)
+            
+        st.write( df)
+    
+#except:
+    print('erro conectar monngo via env')
     
     
     st.write( 'conexão mysql via conection') 
     
     
-    try:   
-           query = 'SELECT * FROM ibov_b3'
-           st.write( 'conexão mysql') 
-           conn = st.connection("desenv_db", "sql")
-           df = conn.query(query,ttl=600)
-           st.write(df)
-    except:
-        print('erro conectar bd via secrets')
+    # try:   
+    #        query = 'SELECT * FROM ibov_b3'
+    #        st.write( 'conexão mysql') 
+    #        conn = st.connection("desenv_db", "sql")
+    #        df = conn.query(query,ttl=600)
+    #        st.write(df)
+    # except:
+    #     print('erro conectar bd via secrets')
         
         
     st.write( 'testando com .env') 
     desenv_db = os.environ.get("MYSQL_CONN") 
+    st.write( 'conexão mysql via conection '+desenv_db) 
     print(desenv_db)
         
-    try:  
-           st.write( 'conexão mysql') 
+    # try:  
+    #        st.write( 'conexão mysql') 
        
-           query = 'SELECT * FROM ibov_b3'
-           conn = st.connection(desenv_db, "sql")
-           df = conn.query(query,ttl=600)
-           st.write(df)
+    #        query = 'SELECT * FROM ibov_b3'
+    #        conn = st.connection(desenv_db, "sql")
+    #        df = conn.query(query,ttl=600)
+    #        st.write(df)
            
-    except:
-        print('erro conectar bd via env')
+    # except:
+    #     print('erro conectar bd via env')
         
-    st.white('testando outro meio mysql')
+    st.write('testando outro meio mysql')
         
     print('testand outro meio')
     
+    query = 'SELECT * FROM ibov_b3'
     sql_conn = sql.create_engine(desenv_db)
     ##df = sql_conn.query(query,ttl=600)
-    pd.read_sql(query, sql_conn)
+    df = pd.read_sql(query, sql_conn)
     st.write(df)
 
 
