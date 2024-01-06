@@ -7,6 +7,7 @@ import mysql
 import sqlalchemy as sql
 ##from sqlalchemy import create_engine, text
 import pandas as pd
+import MySQLdb
 
 def home():
     
@@ -102,16 +103,14 @@ def home():
         
     print('testand outro meio')
     
-    query = sql.text('SELECT * FROM ibov_b3')
+    query = sql.text('SELECT * FROM desenv.ibov_b3')
     sql_conn = sql.create_engine(desenv_db)
     conn = sql_conn.connect()
     df = pd.read_sql_query(query, conn)
     st.write(df)
 
 
-    
- 
-    
+
   
 
     st.markdown("<h2 style='text-align: center; color: rgb(74, 113, 152);'> Portal de Análises Quant financeira, onde você poderá simular e análisar diversos ativos</h2>", unsafe_allow_html=True)
