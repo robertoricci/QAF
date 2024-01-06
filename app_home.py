@@ -50,37 +50,38 @@ def home():
     print(mongo_db)
     
     
-    ##try:
+    try:
   
-    client = pymongo.MongoClient(mongo_db)  
-    db = client["libraryDB"]
-    stock = db["stocks"]
+        client = pymongo.MongoClient(mongo_db)  
+        db = client["libraryDB"]
+        stock = db["stocks"]
 
-    dados = stock.find_one({"index":'PETR4'})
-    if dados:
-        df = pd.DataFrame(dados["data"])
-        print(df.dtypes)
-        df['Date'] = pd.to_datetime(df['Date']).dt.date
-        ##df['Volume'] =  df['Volume'].astype(str)
-        df.set_index("Date",inplace=True)
-            
-        st.write( df)
+        dados = stock.find_one({"index":'PETR4'})
+        if dados:
+            df = pd.DataFrame(dados["data"])
+            print(df.dtypes)
+            df['Date'] = pd.to_datetime(df['Date']).dt.date
+            ##df['Volume'] =  df['Volume'].astype(str)
+            df.set_index("Date",inplace=True)
+                
+            st.write( df)
     
-#except:
-    print('erro conectar monngo via env')
+    except:
+        print('erro conectar monngo via env')
     
     
     st.write( 'conexão mysql via conection') 
     
     
-    # try:   
-    #        query = 'SELECT * FROM ibov_b3'
-    #        st.write( 'conexão mysql') 
-    #        conn = st.connection("desenv_db", "sql")
-    #        df = conn.query(query,ttl=600)
-    #        st.write(df)
-    # except:
-    #     print('erro conectar bd via secrets')
+    try:   
+           st.write('Conexao via connection')
+           query = 'SELECT * FROM ibov_b3'
+           st.write( 'conexão mysql') 
+           conn = st.connection("desenv_db", "sql")
+           df = conn.query(query,ttl=600)
+           st.write(df)
+    except:
+         print('erro conectar bd via secrets')
         
         
     st.write( 'testando com .env') 
@@ -89,12 +90,12 @@ def home():
     print(desenv_db)
         
     # try:  
-    #        st.write( 'conexão mysql') 
+    #         st.write( 'conexão mysql') 
        
-    #        query = 'SELECT * FROM ibov_b3'
-    #        conn = st.connection(desenv_db, "sql")
-    #        df = conn.query(query,ttl=600)
-    #        st.write(df)
+    #         query = 'SELECT * FROM ibov_b3'
+    #         conn = st.connection(desenv_db, "sql")
+    #         df = conn.query(query,ttl=600)
+    #         st.write(df)
            
     # except:
     #     print('erro conectar bd via env')
