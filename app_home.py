@@ -19,48 +19,48 @@ def home():
     
     load_dotenv()
     
-    # try:
+    try:
       
-    #   client = pymongo.MongoClient(st.secrets["mongo"]["url"])  
-    #   db = client["libraryDB"]
-    #   stock = db["stocks"]
+      client = pymongo.MongoClient(st.secrets["mongo"]["url"])  
+      db = client["libraryDB"]
+      stock = db["stocks"]
 
-    #   dados = stock.find_one({"index":'PETR4'})
-    #   if dados:
-    #         df = pd.DataFrame(dados["data"])
-    #         print(df.dtypes)
-    #         df['Date'] = pd.to_datetime(df['Date']).dt.date
-    #         ##df['Volume'] =  df['Volume'].astype(str)
-    #         df.set_index("Date",inplace=True)
+      dados = stock.find_one({"index":'PETR4'})
+      if dados:
+            df = pd.DataFrame(dados["data"])
+            print(df.dtypes)
+            df['Date'] = pd.to_datetime(df['Date']).dt.date
+            ##df['Volume'] =  df['Volume'].astype(str)
+            df.set_index("Date",inplace=True)
              
-    #         st.write( df)
+            st.write( df)
       
-    # except :
-    #     print('erro conectar monngo')
+    except :
+        print('erro conectar monngo')
     
   
-    # st.write( 'lendo-env')
+    st.write( 'lendo-env')
     
     
  
-    # try:
-    #   mongo_db = os.environ.get("MONGO_CONN") 
-    #   client = pymongo.MongoClient(mongo_db)  
-    #   db = client["libraryDB"]
-    #   stock = db["stocks"]
+    try:
+      mongo_db = os.environ.get("MONGO_CONN") 
+      client = pymongo.MongoClient(mongo_db)  
+      db = client["libraryDB"]
+      stock = db["stocks"]
 
-    #   dados = stock.find_one({"index":'PETR4'})
-    #   if dados:
-    #         df = pd.DataFrame(dados["data"])
-    #         print(df.dtypes)
-    #         df['Date'] = pd.to_datetime(df['Date']).dt.date
-    #         ##df['Volume'] =  df['Volume'].astype(str)
-    #         df.set_index("Date",inplace=True)
+      dados = stock.find_one({"index":'PETR4'})
+      if dados:
+            df = pd.DataFrame(dados["data"])
+            print(df.dtypes)
+            df['Date'] = pd.to_datetime(df['Date']).dt.date
+            ##df['Volume'] =  df['Volume'].astype(str)
+            df.set_index("Date",inplace=True)
              
-    #         st.write( df)
+            st.write( df)
       
-    # except:
-    #     print('erro conectar monngo via env')
+    except:
+        print('erro conectar monngo via env')
     
     
     st.write( 'conexão mysql via conection') 
