@@ -86,4 +86,4 @@ SQLAlchemy
 mysql-connector-python
 mysqlclient
 beautifulsoup4
-tabulate
+fundamentus
