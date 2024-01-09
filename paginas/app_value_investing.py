@@ -9,7 +9,7 @@ from libs.fundamentus.lista import (
     get_df_setores,
     get_df_acoes_do_setor,
 )
-import extra_streamlit_components as stx
+##import extra_streamlit_components as stx
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
