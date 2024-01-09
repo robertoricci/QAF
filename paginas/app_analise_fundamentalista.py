@@ -65,9 +65,10 @@ def main():
 
         col1,col2 = st.columns([12,1])   
         with col1:                        
-            st.title('Analisar ativos e recomendações fundamentalistas baseado no site fundamentos')
-            stocks = conn_mongo.find_one('stocks','AZUL4')
-            st.write(stocks)
+            st.title('Analisar dados fundamentalista de ativos')
+            st.write('EM DESENVOLVIMENTO')
+            ##stocks = conn_mongo.find_one('stocks','AZUL4')
+            ##st.write(stocks)
            
              
                     
