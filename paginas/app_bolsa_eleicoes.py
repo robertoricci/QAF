@@ -2,28 +2,8 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 import plotly.express as px
-import style as style
+import html_css.style as style
 from datetime import datetime
-#import numpy as np
-#import pandas as pd
-# import yfinance as yf
-# #import time
-# import matplotlib.pyplot as plt
-# import plotly.express as px
-# import seaborn as sns
-# import cufflinks as cf
-# #import datetime
-# #from datetime import date
-# import math
-# import fundamentus
-
-
-# st.set_page_config(  # Alternate names: setup_page, page, layout
-# 	layout="wide",  # Can be "centered" or "wide". In the future also "dashboard", etc.
-# 	initial_sidebar_state="auto",  # Can be "auto", "expanded", "collapsed"
-# 	page_title="",  # String or None. Strings get appended with "• Streamlit". 
-# 	page_icon=None,  # String, anything supported by st.image, or None.
-# )
 
 def bolsa():
     style.button()
@@ -111,7 +91,7 @@ def gerar_grafico_unid(tab,ticker):
     
     st.plotly_chart(fig,use_container_width=True)   
     
-@st.cache(allow_output_mutation=True)
+@st.cache_data(show_spinner="Atualizando dados...", ttl=3600)
 def puxar_dados(ticker,dt_ini,dt_fim):
     precos = yf.download(ticker, start=dt_ini, end=dt_fim, progress=False)[['Adj Close']]
     #precos = precos.fillna(method='bfill')

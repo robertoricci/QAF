@@ -18,82 +18,79 @@ def home():
     col1, col2, col3 = st.columns([0.7,1,0.7])
     #col2.image('./imagen/analisequant_logo-removebg.png')
     
-    st.write( 'lendo-secrets dddddddd')
-  
+   
     
-    load_dotenv()
+    # load_dotenv()
     
-    try:
+    # try:
       
-      client = pymongo.MongoClient(st.secrets["mongo"]["url"])  
-      db = client["libraryDB"]
-      stock = db["stocks"]
+    #   client = pymongo.MongoClient(st.secrets["mongo"]["url"])  
+    #   db = client["libraryDB"]
+    #   stock = db["stocks"]
 
-      dados = stock.find_one({"index":'PETR4'})
-      if dados:
-            df = pd.DataFrame(dados["data"])
-            print(df.dtypes)
-            df['Date'] = pd.to_datetime(df['Date']).dt.date
-            ##df['Volume'] =  df['Volume'].astype(str)
-            df.set_index("Date",inplace=True)
+    #   dados = stock.find_one({"index":'PETR4'})
+    #   if dados:
+    #         df = pd.DataFrame(dados["data"])
+    #         print(df.dtypes)
+    #         df['Date'] = pd.to_datetime(df['Date']).dt.date
+    #         ##df['Volume'] =  df['Volume'].astype(str)
+    #         df.set_index("Date",inplace=True)
              
-            st.write( df)
+    #         st.write( df)
       
-    except :
-        print('erro conectar monngo')
+    # except :
+    #     print('erro conectar monngo')
     
-    try:
+    # try:
   
-        client = pymongo.MongoClient(st.secrets["mongo"]["url"])  
-        db = client["libraryDB"]
-        stock = db["stocks"]
+    #     client = pymongo.MongoClient(st.secrets["mongo"]["url"])  
+    #     db = client["libraryDB"]
+    #     stock = db["stocks"]
 
-        dados = stock.find_one({"index":'PETR4'})
-        if dados:
-            df = pd.DataFrame(dados["data"])
-            print(df.dtypes)
-            df['Date'] = pd.to_datetime(df['Date']).dt.date
-            ##df['Volume'] =  df['Volume'].astype(str)
-            df.set_index("Date",inplace=True)
+    #     dados = stock.find_one({"index":'PETR4'})
+    #     if dados:
+    #         df = pd.DataFrame(dados["data"])
+    #         print(df.dtypes)
+    #         df['Date'] = pd.to_datetime(df['Date']).dt.date
+    #         ##df['Volume'] =  df['Volume'].astype(str)
+    #         df.set_index("Date",inplace=True)
                 
-            st.write( df)
+    #         st.write( df)
     
-    except:
-        print('erro conectar monngo via env')
-    
-    
-    st.write( 'conexão mysql via conection') 
+    # except:
+    #     print('erro conectar monngo via env')
     
     
-    try:   
-           st.write('Conexao via connection')
-           query = 'SELECT * FROM ibov_b3'
-           st.write( 'conexão mysql') 
-           conn = st.connection("desenv_db", "sql")
-           df = conn.query(query,ttl=600)
-           st.write(df)
-    except:
-         print('erro conectar bd via secrets')
+    # st.write( 'conexão mysql via conection') 
+    
+    
+    # try:   
+    #        st.write('Conexao via connection')
+    #        query = 'SELECT * FROM ibov_b3'
+    #        st.write( 'conexão mysql') 
+    #        conn = st.connection("desenv_db", "sql")
+    #        df = conn.query(query,ttl=600)
+    #        st.write(df)
+    # except:
+    #      print('erro conectar bd via secrets')
         
         
-    st.write( 'testando com .env') 
-    desenv_db = os.environ.get("MYSQL_CONN") 
-    st.write( 'conexão mysql via conection '+desenv_db) 
+    # st.write( 'testando com .env') 
+    # desenv_db = os.environ.get("MYSQL_CONN") 
+    # st.write( 'conexão mysql via conection '+desenv_db) 
    
         
-    st.write('testando outro meio mysql')
+    # st.write('testando outro meio mysql')
         
-    print('testand outro meio')
+    # print('testand outro meio')
     
-    query = sql.text('SELECT * FROM desenv.ibov_b3')
-    sql_conn = sql.create_engine(desenv_db)
-    conn = sql_conn.connect()
-    df = pd.read_sql_query(query, conn)
-    st.write(df)
+    # query = sql.text('SELECT * FROM desenv.ibov_b3')
+    # sql_conn = sql.create_engine(desenv_db)
+    # conn = sql_conn.connect()
+    # df = pd.read_sql_query(query, conn)
+    # st.write(df)
 
 
-
-  
 
     st.markdown("<h2 style='text-align: center; color: rgb(74, 113, 152);'> Portal de Análises Quant financeira, onde você poderá simular e análisar diversos ativos</h2>", unsafe_allow_html=True)
     st.markdown("<h4 style='text-align: center; color: rgb(74, 113, 152)'>ATENÇÃO - Análises feitas através de APIs públicas</h4>", unsafe_allow_html=True)

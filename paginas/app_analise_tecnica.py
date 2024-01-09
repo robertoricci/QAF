@@ -3,48 +3,50 @@ matplotlib.use('Agg')
 
 #from turtle import width
 import streamlit as st
-
-from yahooquery import Ticker
-
+##from yahooquery import Ticker
 import pandas as pd
 import yfinance as yf
-# from fbprophet import Prophet
+###from fbprophet import Prophet
 import numpy as np
 import plotly.graph_objects as go
-
 import scrap as scraping
-import style as style
-import html01 as html01
-
+import html_css.html01 as html01
+#import Prophet
 def analise_tecnica_fundamentalista():
 
+
     #código para ativar bootstrap css
-    st.markdown(
-"""
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-""",unsafe_allow_html=True
-    )  
+#     st.markdown(
+# """
+# <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+# <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+# """,unsafe_allow_html=True
+#     )  
     
     col1, col2,col3 = st.columns([0.1,0.4,0.1])   
     with col2:   
-        st.title('Análise Técnica')
+        st.title('Análise Técnica :sunglasses:')
+        
         st.subheader('Escolha o ativo que deseja analisar e pressione enter')  
         #nome_do_ativo = st.text_input('Nome do ativo ex: PETR4, VALE3, WEGE3...')
         codigo_nome = pd.read_excel('data/classification_b3.xlsx')
-        nome_do_ativo = st.selectbox('Esoolha a ação que deseja analisar', (codigo_nome['Código']) )
+        nome_do_ativo = st.selectbox('Escolha a ação que deseja analisar', (codigo_nome['Código']) )
 
-    style.space(1)
+    #style.space(1)
     
     if nome_do_ativo != "":
         nome_do_ativo = str(nome_do_ativo + '.SA').upper()
-        df = Ticker(nome_do_ativo,country='Brazil')
+        ##########df = Ticker(nome_do_ativo,country='Brazil')
+        print(nome_do_ativo)
+        df = yf.Ticker(nome_do_ativo)
         time = df.history( period='max')
-
+        
+    
     # ------------------------------ RESUMO ---------------------------- 
 
-        resumo = pd.DataFrame(df.summary_detail)
-        resumo = resumo.transpose()
+        #####resumo = pd.DataFrame(df.summary_detail)
+        
+        ####resumo = resumo.transpose()
         
         if len(nome_do_ativo) == 8:
             
@@ -54,6 +56,7 @@ def analise_tecnica_fundamentalista():
             try:
                 
                 pfizer = yf.Ticker(nome_do_ativo)
+            
                 info = pfizer.info 
                 if info['recommendationKey'] == 'buy':
                     recomendation = 'alta'
@@ -77,14 +80,14 @@ def analise_tecnica_fundamentalista():
                 with metric4:
                     st.metric(label="Próximo dividendo", value=f"{pfizer.calendar.transpose()['Earnings Date'].dt.strftime('%d/%m/%Y')[0]}")
 
-                style.space(2) 
+                #style.space(2) 
 
             except:
                 exit
             
         else:
             st.write('---------------------------------------------------------------------')
-            st.dataframe(resumo) 
+            ##########st.dataframe(resumo) 
             pfizer = yf.Ticker(nome_do_ativo)
             info = pfizer.info 
             st.title('Company Profile')
@@ -100,29 +103,35 @@ def analise_tecnica_fundamentalista():
 
         if len(nome_do_ativo) == 8:
             
+            print()
+            
             import datetime
-            fundamentalist = df.income_statement()
-            fundamentalist['data'] = fundamentalist['asOfDate'].dt.strftime('%d/%m/%Y')
-            fundamentalist = fundamentalist.drop_duplicates('asOfDate')
-            fundamentalist = fundamentalist.loc[fundamentalist['periodType'] == '12M']
+            ####fundamentalist = df.get_incomestmt()
+            
+            ####fundamentalist['data'] = fundamentalist['asOfDate'].dt.strftime('%d/%m/%Y')
+            ####fundamentalist = fundamentalist.drop_duplicates('asOfDate')
+            ####fundamentalist = fundamentalist.loc[fundamentalist['periodType'] == '12M']
 
             #volatilidade
-            TRADING_DAYS = 360
-            returns = np.log(time['close']/time['close'].shift(1))
+            TRADING_DAYS = 252
+            returns = np.log(time['Close']/time['Close'].shift(1))
             returns.fillna(0, inplace=True)
-            volatility = returns.rolling(window=TRADING_DAYS).std()*np.sqrt(TRADING_DAYS)
-            vol = pd.DataFrame(volatility.iloc[-360:]).reset_index()
+            
+            volatility = returns.rolling(window=TRADING_DAYS).std() * np.sqrt(TRADING_DAYS)
+            
+            vol = pd.DataFrame(volatility.iloc[-252:]).reset_index()
 
             #sharpe ratio
-            sharpe_ratio = returns.mean()/volatility
-            sharpe = pd.DataFrame(sharpe_ratio.iloc[-360:]).reset_index()
+            sharpe_ratio = returns.mean() / volatility
+            sharpe = pd.DataFrame(sharpe_ratio.iloc[-252:]).reset_index()
 
             div = time.reset_index()
-            div['year'] = pd.to_datetime(div['date']).dt.strftime('%Y')
-            div_group = div.groupby('year').agg({'close':'mean','dividends':'sum'})
-            div_group['dividendo(%)'] = round((div_group['dividends'] * 100 ) / div_group['close'],4)
+            div['year'] = pd.to_datetime(div['Date']).dt.strftime('%Y')
+            div_group = div.groupby('year').agg({'Close':'mean','Dividends':'sum'})
+            div_group['dividendo(%)'] = round((div_group['Dividends'] * 100 ) / div_group['Close'],4)
 
             from plotly.subplots import make_subplots
+            
             fig = make_subplots(
                 rows=3, cols=2,
                 specs=[[{"type": "bar"}, {"type": "bar"}],
@@ -130,18 +139,19 @@ def analise_tecnica_fundamentalista():
                     [{"type": "scatter"}, {"type": "scatter"}]],
                 subplot_titles=("Receita Total","Lucro",'Dividendos (%)','Dividendos unitário R$','Volatilidade', 'Sharpe ratio (Retorno/ Risco)')
             )
+            
 
             fig.add_trace(go.Bar(x =pfizer.financials.transpose().index,  y=pfizer.financials.transpose()['Total Revenue']), row=1, col=1)
 
-            fig.add_trace(go.Bar(x =pfizer.financials.transpose().index,  y=pfizer.financials.transpose()['Net Income From Continuing Ops']), row=1, col=2)
+            fig.add_trace(go.Bar(x =pfizer.financials.transpose().index,  y=pfizer.financials.transpose()['Net Income Continuous Operations']), row=1, col=2)
 
             fig.add_trace(go.Bar(x =div_group.reset_index().tail(5)['year'],  y=div_group.reset_index().tail(5)['dividendo(%)']),row=2, col=1)
 
-            fig.add_trace(go.Bar(x =div_group.reset_index().tail(5)['year'],  y=div_group.reset_index().tail(5)['dividends']),row=2, col=2)
+            fig.add_trace(go.Bar(x =div_group.reset_index().tail(5)['year'],  y=div_group.reset_index().tail(5)['Dividends']),row=2, col=2)
 
-            fig.add_trace(go.Scatter(x =vol['date'],  y=vol['close']),row=3, col=1)
+            fig.add_trace(go.Scatter(x =vol['Date'],  y=vol['Close']),row=3, col=1)
 
-            fig.add_trace(go.Scatter(x =sharpe['date'],  y=sharpe['close']),row=3, col=2)
+            fig.add_trace(go.Scatter(x =sharpe['Date'],  y=sharpe['Close']),row=3, col=2)
 
             fig.update_layout( height=800, width=800 ,showlegend=False, paper_bgcolor='rgba(255,255,255,0.9)', plot_bgcolor='rgba(255,255,255,0.9)') 
             fig.update_yaxes(showgrid=True, gridwidth=0.1, gridcolor = 'rgb(240,238,238)')
@@ -154,13 +164,13 @@ def analise_tecnica_fundamentalista():
         else:
             #volatilidade
             TRADING_DAYS = 160
-            returns = np.log(time['close']/time['close'].shift(1))
+            returns = np.log(time['Close']/time['Close'].shift(1))
             returns.fillna(0, inplace=True)
             volatility = returns.rolling(window=TRADING_DAYS).std()*np.sqrt(TRADING_DAYS)
             vol = pd.DataFrame(volatility.iloc[-160:]).reset_index()
 
             #sharpe ratio
-            sharpe_ratio = returns.mean()/volatility
+            sharpe_ratio = returns.mean() / volatility
             sharpe = pd.DataFrame(sharpe_ratio.iloc[-160:]).reset_index()
 
             from plotly.subplots import make_subplots
@@ -170,9 +180,9 @@ def analise_tecnica_fundamentalista():
                 subplot_titles=('Volatilidade', 'Sharpe ratio (Retorno/ Risco)')
             )
 
-            fig.add_trace(go.Scatter(x =vol['date'],  y=vol['close']),row=1, col=1)
+            fig.add_trace(go.Scatter(x =vol['Date'],  y=vol['Close']),row=1, col=1)
 
-            fig.add_trace(go.Scatter(x =sharpe['date'],  y=sharpe['close']),row=1, col=2)
+            fig.add_trace(go.Scatter(x =sharpe['Date'],  y=sharpe['Close']),row=1, col=2)
 
             fig.update_layout( height=800, width=800 ,showlegend=False, paper_bgcolor='rgba(255,255,255,0.9)', plot_bgcolor='rgba(255,255,255,0.9)') 
             fig.update_yaxes(showgrid=True, gridwidth=0.1, gridcolor = 'rgb(240,238,238)')
@@ -195,13 +205,13 @@ def analise_tecnica_fundamentalista():
             row_width=[0.2, 0.7])
 
         # Plot OHLC on 1st row
-        fig.add_trace(go.Candlestick(x=time.reset_index()['date'][-90:],
-                        open=time['open'][-90:], high=time['high'][-90:],
-                        low=time['low'][-90:], close=time['close'][-90:], name="OHLC"), 
+        fig.add_trace(go.Candlestick(x=time.reset_index()['Date'][-90:],
+                        open=time['Open'][-90:], high=time['High'][-90:],
+                        low=time['Low'][-90:], close=time['Close'][-90:], name="OHLC"), 
                         row=1, col=1)            
 
         # Bar trace for volumes on 2nd row without legend
-        fig.add_trace(go.Bar(x=time.reset_index()['date'][-90:], y=time['volume'][-90:], showlegend=False), row=2, col=1)
+        fig.add_trace(go.Bar(x=time.reset_index()['Date'][-90:], y=time['Volume'][-90:], showlegend=False), row=2, col=1)
 
         # Do not show OHLC's rangeslider plot 
         fig.update(layout_xaxis_rangeslider_visible=False)
@@ -219,7 +229,7 @@ def analise_tecnica_fundamentalista():
 
         layout = go.Layout(title="Retorno acumulado",xaxis=dict(title="Data"), yaxis=dict(title="Retorno"))
         fig = go.Figure(layout = layout)
-        fig.add_trace(go.Scatter(x=time.reset_index()['date'][-365:], y=time.reset_index()['close'][-365:].pct_change().cumsum(), mode='lines', line_width=3,line_color='rgb(0,0,0)'))
+        fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-365:], y=time.reset_index()['Close'][-365:].pct_change().cumsum(), mode='lines', line_width=3,line_color='rgb(0,0,0)'))
 
         fig.update_layout( height=600, width=800 ,showlegend=False, paper_bgcolor='rgba(255,255,255,0.9)', plot_bgcolor='rgba(255,255,255,0.9)') 
         fig.update_yaxes(showgrid=True, gridwidth=0.1, gridcolor = 'rgb(240,238,238)')
@@ -231,25 +241,25 @@ def analise_tecnica_fundamentalista():
             st.write("""Gráfico de Médias móveis, Cada ponto no gráfico representa a média dos últimos x dias, exemplo MM20 = média móvel dos última 20 dias.""")
             st.write("""Com ela, é possível identificar o equilíbrio dos preços no mercado, observando tendências de alta, neutra ou baixa. A representação gráfica das Médias Móveis é normalmente feita por uma linha, que se movimenta conforme os dados novos recebidos para o cálculo.""")
 
-        rolling_200  = time['close'].rolling(window=200)
+        rolling_200  = time['Close'].rolling(window=200)
         rolling_mean_200 = rolling_200.mean()
 
-        rolling_50  = time['close'].rolling(window=72)
+        rolling_50  = time['Close'].rolling(window=72)
         rolling_mean_50 = rolling_50.mean()
 
-        rolling_20  = time['close'].rolling(window=20)
+        rolling_20  = time['Close'].rolling(window=20)
         rolling_mean_20 = rolling_20.mean()
 
-        rolling_10  = time['close'].rolling(window=9)
+        rolling_10  = time['Close'].rolling(window=9)
         rolling_mean_10 = rolling_10.mean()
 
         layout = go.Layout(title="Médias móveis - ative ou desative clicando na legenda da média",xaxis=dict(title="Data"), yaxis=dict(title="Preço R$"))
         fig = go.Figure(layout = layout)
-        fig.add_trace(go.Scatter(x=time.reset_index()['date'][-120:], y=time["close"][-120:], mode='lines', line_width=3,name='Real',line_color='rgb(0,0,0)'))
-        fig.add_trace(go.Scatter(x=time.reset_index()['date'][-120:], y=rolling_mean_200[-120:],mode='lines',name='MM(200)',opacity = 0.6))
-        fig.add_trace(go.Scatter(x=time.reset_index()['date'][-120:], y=rolling_mean_50[-120:],mode='lines',name='MM(72)',opacity = 0.6))
-        fig.add_trace(go.Scatter(x=time.reset_index()['date'][-120:], y=rolling_mean_20[-120:],mode='lines',name='MM(20)',opacity = 0.6))
-        fig.add_trace(go.Scatter(x=time.reset_index()['date'][-120:], y=rolling_mean_10[-120:],mode='lines',name='MM(9)',opacity = 0.6,line_color='rgb(100,149,237)'))
+        fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-120:], y=time["Close"][-120:], mode='lines', line_width=3,name='Real',line_color='rgb(0,0,0)'))
+        fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-120:], y=rolling_mean_200[-120:],mode='lines',name='MM(200)',opacity = 0.6))
+        fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-120:], y=rolling_mean_50[-120:],mode='lines',name='MM(72)',opacity = 0.6))
+        fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-120:], y=rolling_mean_20[-120:],mode='lines',name='MM(20)',opacity = 0.6))
+        fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-120:], y=rolling_mean_10[-120:],mode='lines',name='MM(9)',opacity = 0.6,line_color='rgb(100,149,237)'))
 
         fig.update_yaxes(showgrid=True, gridwidth=0.1, gridcolor = 'rgb(240,238,238)')
         fig.update_layout(autosize=True, height=600, width=800 ,showlegend=True, paper_bgcolor='rgba(255,255,255,0.9)', plot_bgcolor='rgba(255,255,255,0.9)') 
@@ -267,8 +277,8 @@ def analise_tecnica_fundamentalista():
         
         periodo_fibonacci = int(st.number_input(label='periodo fibonacci - traçada do menor valor encontrado no período de tempo setado abaixo até o maior valor encontrado para frente',value= 45 ))
         
-        Price_Min =time_fibo[-periodo_fibonacci:]['low'].min()
-        Price_Max =time_fibo[-periodo_fibonacci:]['high'].max()
+        Price_Min =time_fibo[-periodo_fibonacci:]['Low'].min()
+        Price_Max =time_fibo[-periodo_fibonacci:]['High'].max()
 
         Diff = Price_Max-Price_Min
         level1 = Price_Max - 0.236 * Diff
@@ -289,12 +299,12 @@ def analise_tecnica_fundamentalista():
 
         layout = go.Layout(title=f'Retração de Fibonacci',xaxis=dict(title="Data"), yaxis=dict(title="Preço"))
         fig = go.Figure(layout = layout)
-        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['date'], y=time_fibo[-periodo_fibonacci:].close, mode='lines', line_width=3,name='Preço real',line_color='rgb(0,0,0)'))
-        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['date'], y=time_fibo[-periodo_fibonacci:].Price_Min, mode='lines', line_width=0.5,name='100%',line_color='rgb(255,0,0)',))
-        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['date'], y=time_fibo[-periodo_fibonacci:].level3, mode='lines', line_width=0.5,name='61,8%',line_color='rgb(255,255,0)',fill= 'tonexty', fillcolor ="rgba(255, 0, 0, 0.2)"))
-        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['date'], y=time_fibo[-periodo_fibonacci:].level2, mode='lines', line_width=0.5,name='38,2%',line_color='rgb(0,128,0)',fill= 'tonexty', fillcolor ="rgba(255, 255, 0, 0.2)"))
-        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['date'], y=time_fibo[-periodo_fibonacci:].level1, mode='lines', line_width=0.5,name='23,6%',line_color='rgb(128,128,128)',fill= 'tonexty', fillcolor ="rgba(0, 128, 0, 0.2)"))
-        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['date'], y=time_fibo[-periodo_fibonacci:].Price_Max, mode='lines', line_width=0.5,name='0%',line_color='rgb(0,0,255)',fill= 'tonexty', fillcolor ="rgba(128, 128, 128, 0.2)"))
+        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['Date'], y=time_fibo[-periodo_fibonacci:].Close, mode='lines', line_width=3,name='Preço real',line_color='rgb(0,0,0)'))
+        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['Date'], y=time_fibo[-periodo_fibonacci:].Price_Min, mode='lines', line_width=0.5,name='100%',line_color='rgb(255,0,0)',))
+        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['Date'], y=time_fibo[-periodo_fibonacci:].level3, mode='lines', line_width=0.5,name='61,8%',line_color='rgb(255,255,0)',fill= 'tonexty', fillcolor ="rgba(255, 0, 0, 0.2)"))
+        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['Date'], y=time_fibo[-periodo_fibonacci:].level2, mode='lines', line_width=0.5,name='38,2%',line_color='rgb(0,128,0)',fill= 'tonexty', fillcolor ="rgba(255, 255, 0, 0.2)"))
+        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['Date'], y=time_fibo[-periodo_fibonacci:].level1, mode='lines', line_width=0.5,name='23,6%',line_color='rgb(128,128,128)',fill= 'tonexty', fillcolor ="rgba(0, 128, 0, 0.2)"))
+        fig.add_trace(go.Scatter(x=time_fibo[-periodo_fibonacci:].reset_index()['Date'], y=time_fibo[-periodo_fibonacci:].Price_Max, mode='lines', line_width=0.5,name='0%',line_color='rgb(0,0,255)',fill= 'tonexty', fillcolor ="rgba(128, 128, 128, 0.2)"))
 
         fig.update_layout( height=600, width=800 ,showlegend=False, paper_bgcolor='rgba(255,255,255,0.9)', plot_bgcolor='rgba(255,255,255,0.9)') 
         fig.update_yaxes(showgrid=True, gridwidth=0.1, gridcolor = 'rgb(240,238,238)')
@@ -304,7 +314,7 @@ def analise_tecnica_fundamentalista():
     # ------------------------------ GRÁFICOS DE RSI---------------------------- 
         try:
             
-            delta = time['close'][-periodo_RSI:].diff()
+            delta = time['Close'][-periodo_RSI:].diff()
             up, down = delta.copy(), delta.copy()
 
             up[up < 0] = 0
@@ -320,7 +330,7 @@ def analise_tecnica_fundamentalista():
 
             layout = go.Layout(title=f'RSI {periodo_RSI}',xaxis=dict(title="Data"), yaxis=dict(title="%RSI"))
             fig = go.Figure(layout = layout)
-            fig.add_trace(go.Scatter(x=time.reset_index()['date'][-periodo_RSI:], y=round(time['RSI_14'][-periodo_RSI:],2), mode='lines', line_width=3,name=f'RSI {periodo_RSI}',line_color='rgb(0,0,0)'))
+            fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-periodo_RSI:], y=round(time['RSI_14'][-periodo_RSI:],2), mode='lines', line_width=3,name=f'RSI {periodo_RSI}',line_color='rgb(0,0,0)'))
 
             fig.update_layout( height=600, width=800 ,showlegend=False, paper_bgcolor='rgba(255,255,255,0.9)', plot_bgcolor='rgba(255,255,255,0.9)') 
             fig.update_yaxes(showgrid=True, gridwidth=0.1, gridcolor = 'rgb(240,238,238)')
@@ -345,7 +355,7 @@ def analise_tecnica_fundamentalista():
 
     #     periodo_pivo = int(st.number_input(label='periodo pivô',value=20))
 
-    #     time['PP'] = pd.Series((time['high'] + time['low'] + time['close']) /3)  
+    #     time['PP'] = pd.Series((time['high'] + time['low'] + time['Close']) /3)  
     #     time['R1'] = pd.Series(2 * time['PP'] - time['low'])  
     #     time['S1'] = pd.Series(2 * time['PP'] - time['high'])  
     #     time['R2'] = pd.Series(time['PP'] + time['high'] - time['low'])  
@@ -353,12 +363,12 @@ def analise_tecnica_fundamentalista():
 
     #     layout = go.Layout(title=f'Pivô',xaxis=dict(title="Data"), yaxis=dict(title="Preço"))
     #     fig = go.Figure(layout = layout)
-    #     fig.add_trace(go.Scatter(x=time.reset_index()['date'][-periodo_pivo:], y=round(time['close'][-periodo_pivo:],2), mode='lines', line_width=3,name=f'preço real',line_color='rgb(0,0,0)'))
-    #     fig.add_trace(go.Scatter(x=time.reset_index()['date'][-periodo_pivo:], y=round(time['PP'][-periodo_pivo:],2), mode='lines', line_width=1,name=f'Ponto do pivô',line_color='rgb(0,128,0)'))
-    #     fig.add_trace(go.Scatter(x=time.reset_index()['date'][-periodo_pivo:], y=round(time['R1'][-periodo_pivo:],2), mode='lines', line_width=1,name=f'Resistência 1',line_color='rgb(100,149,237)'))
-    #     fig.add_trace(go.Scatter(x=time.reset_index()['date'][-periodo_pivo:], y=round(time['S1'][-periodo_pivo:],2), mode='lines', line_width=1,name=f'Suporte 1',line_color='rgb(100,149,237)'))
-    #     fig.add_trace(go.Scatter(x=time.reset_index()['date'][-periodo_pivo:], y=round(time['R2'][-periodo_pivo:],2), mode='lines', line_width=1,name=f'Resistência 2',line_color='rgb(255,0,0)'))
-    #     fig.add_trace(go.Scatter(x=time.reset_index()['date'][-periodo_pivo:], y=round(time['S2'][-periodo_pivo:],2), mode='lines', line_width=1,name=f'Suporte 2',line_color='rgb(255,0,0)'))
+    #     fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-periodo_pivo:], y=round(time['Close'][-periodo_pivo:],2), mode='lines', line_width=3,name=f'preço real',line_color='rgb(0,0,0)'))
+    #     fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-periodo_pivo:], y=round(time['PP'][-periodo_pivo:],2), mode='lines', line_width=1,name=f'Ponto do pivô',line_color='rgb(0,128,0)'))
+    #     fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-periodo_pivo:], y=round(time['R1'][-periodo_pivo:],2), mode='lines', line_width=1,name=f'Resistência 1',line_color='rgb(100,149,237)'))
+    #     fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-periodo_pivo:], y=round(time['S1'][-periodo_pivo:],2), mode='lines', line_width=1,name=f'Suporte 1',line_color='rgb(100,149,237)'))
+    #     fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-periodo_pivo:], y=round(time['R2'][-periodo_pivo:],2), mode='lines', line_width=1,name=f'Resistência 2',line_color='rgb(255,0,0)'))
+    #     fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-periodo_pivo:], y=round(time['S2'][-periodo_pivo:],2), mode='lines', line_width=1,name=f'Suporte 2',line_color='rgb(255,0,0)'))
 
     #     fig.update_layout( height=600, width=800 ,showlegend=False, paper_bgcolor='rgba(255,255,255,0.9)', plot_bgcolor='rgba(255,255,255,0.9)') 
     #     fig.update_yaxes(showgrid=True, gridwidth=0.1, gridcolor = 'rgb(240,238,238)')
@@ -371,17 +381,17 @@ def analise_tecnica_fundamentalista():
 
         periodo_bolinger = int(st.number_input(label='periodo Bolinger',value=180))
 
-        time['MA20'] = time['close'].rolling(20).mean()
-        time['20 Day STD'] = time['close'].rolling(window=20).std()
+        time['MA20'] = time['Close'].rolling(20).mean()
+        time['20 Day STD'] = time['Close'].rolling(window=20).std()
         time['Upper Band'] = time['MA20'] + (time['20 Day STD'] * 2)
         time['Lower Band'] = time['MA20'] - (time['20 Day STD'] * 2)
 
         layout = go.Layout(title=f'Banda de Bolinger',xaxis=dict(title="Data"), yaxis=dict(title="Preço"))
         fig = go.Figure(layout = layout)
-        fig.add_trace(go.Scatter(x=time.reset_index()['date'][-periodo_bolinger:], y=round(time['Upper Band'][-periodo_bolinger:],2), mode='lines', line_width=1,name=f'Banda superior',line_color='rgb(255,0,0)'))
-        fig.add_trace(go.Scatter(x=time.reset_index()['date'][-periodo_bolinger:], y=round(time['Lower Band'][-periodo_bolinger:],2), mode='lines', line_width=1,name=f'Banda inferior',line_color='rgb(255,0,0)',fill= 'tonexty', fillcolor ="rgba(255, 0, 0, 0.1)",opacity=0.2))
-        fig.add_trace(go.Scatter(x=time.reset_index()['date'][-periodo_bolinger:], y=round(time['close'][-periodo_bolinger:],2), mode='lines', line_width=3,name=f'preço real',line_color='rgb(0,0,0)'))
-        fig.add_trace(go.Scatter(x=time.reset_index()['date'][-periodo_bolinger:], y=round(time['MA20'][-periodo_bolinger:],2), mode='lines', line_width=2,name=f'MM 20',line_color='rgb(0,128,0)'))
+        fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-periodo_bolinger:], y=round(time['Upper Band'][-periodo_bolinger:],2), mode='lines', line_width=1,name=f'Banda superior',line_color='rgb(255,0,0)'))
+        fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-periodo_bolinger:], y=round(time['Lower Band'][-periodo_bolinger:],2), mode='lines', line_width=1,name=f'Banda inferior',line_color='rgb(255,0,0)',fill= 'tonexty', fillcolor ="rgba(255, 0, 0, 0.1)",opacity=0.2))
+        fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-periodo_bolinger:], y=round(time['Close'][-periodo_bolinger:],2), mode='lines', line_width=3,name=f'preço real',line_color='rgb(0,0,0)'))
+        fig.add_trace(go.Scatter(x=time.reset_index()['Date'][-periodo_bolinger:], y=round(time['MA20'][-periodo_bolinger:],2), mode='lines', line_width=2,name=f'MM 20',line_color='rgb(0,128,0)'))
   
         fig.update_layout( height=600, width=800 ,showlegend=False, paper_bgcolor='rgba(255,255,255,0.9)', plot_bgcolor='rgba(255,255,255,0.9)') 
         fig.update_yaxes(showgrid=True, gridwidth=0.1, gridcolor = 'rgb(240,238,238)')
@@ -394,42 +404,42 @@ def analise_tecnica_fundamentalista():
 
     # # ------------------------------ Previsões---------------------------- 
 
-    #     st.subheader('Previsões')
+        # st.subheader('Previsões')
 
-    #     st.write('As previsões são feitas levando em conta apenas o movimento gráfico, porém o movimento do preço de um ativo é influenciado por diversos outros fatores, com isso, deve se considerar as previsões como uma hipótese de o preço do ativo variar somente pela sua variação gráfica')
+        # st.write('As previsões são feitas levando em conta apenas o movimento gráfico, porém o movimento do preço de um ativo é influenciado por diversos outros fatores, com isso, deve se considerar as previsões como uma hipótese de o preço do ativo variar somente pela sua variação gráfica')
 
-    #     st.write('Previsão considerando os últimos 365 dias, pode ser entendida como uma tendência dos dados segundo o último ano')
+        # st.write('Previsão considerando os últimos 365 dias, pode ser entendida como uma tendência dos dados segundo o último ano')
         
-    #     st.write('Opção de alterar a previsão: caso esteja buscando resultados a curto prazo é possível alterar o "periodo analisado" para fazer previsões apenas com base nos últimos x dias. Neste caso o movimento gráfico para trás dos dias selecionados não serão levados em conta')
-    #     periodo_analisado = int(st.number_input(label='período analisado (dias de resultados passados)',value=360))
+        # st.write('Opção de alterar a previsão: caso esteja buscando resultados a curto prazo é possível alterar o "periodo analisado" para fazer previsões apenas com base nos últimos x dias. Neste caso o movimento gráfico para trás dos dias selecionados não serão levados em conta')
+        # periodo_analisado = int(st.number_input(label='período analisado (dias de resultados passados)',value=360))
 
-    #     st.write('Opção de alterar a previsão: possibilidade de prever resultados futuros por mais de 30 dias')
-    #     periodo_futuro = int(st.number_input(label='período futuro a prever (dias)',value=30))
+        # st.write('Opção de alterar a previsão: possibilidade de prever resultados futuros por mais de 30 dias')
+        # periodo_futuro = int(st.number_input(label='período futuro a prever (dias)',value=30))
 
-    #     time = time.reset_index()
-    #     time = time[['date','close']]
-    #     time.columns = ['ds','y']
+        # time = time.reset_index()
+        # time = time[['Date','Close']]
+        # time.columns = ['ds','y']
 
-    #     #Modelling
-    #     m = Prophet()
-    #     m.fit(time[-periodo_analisado:])
-    #     future = m.make_future_dataframe(periods= periodo_futuro, freq='B')
-    #     forecast = m.predict(future[-periodo_futuro:])
+        # #Modelling
+        # m = Prophet()
+        # m.fit(time[-periodo_analisado:])
+        # future = m.make_future_dataframe(periods= periodo_futuro, freq='B')
+        # forecast = m.predict(future[-periodo_futuro:])
 
-    #     from fbprophet.plot import plot_plotly, plot_components_plotly
+        # from fbprophet.plot import plot_plotly, plot_components_plotly
 
-    #     fig1 = plot_plotly(m, forecast)
-    #     fig1.update_layout( height=600, width=800 ,showlegend=False, paper_bgcolor='rgba(255,255,255,0.9)', plot_bgcolor='rgba(255,255,255,0.9)') 
-    #     fig1.update_yaxes(showgrid=True, gridwidth=0.1, gridcolor = 'rgb(240,238,238)')
+        # fig1 = plot_plotly(m, forecast)
+        # fig1.update_layout( height=600, width=800 ,showlegend=False, paper_bgcolor='rgba(255,255,255,0.9)', plot_bgcolor='rgba(255,255,255,0.9)') 
+        # fig1.update_yaxes(showgrid=True, gridwidth=0.1, gridcolor = 'rgb(240,238,238)')
 
-    #     st.plotly_chart(fig1,use_container_width=True)    
+        # st.plotly_chart(fig1,use_container_width=True)    
 
-    #     st.subheader('Tendência diária e semanal')
-    #     st.write('0 = segunda, 1 = terça, ... , 5 = sábado, 6 = domingo')
-    #     fig2 = m.plot_components(forecast,uncertainty = False,weekly_start=1)
+        # st.subheader('Tendência diária e semanal')
+        # st.write('0 = segunda, 1 = terça, ... , 5 = sábado, 6 = domingo')
+        # fig2 = m.plot_components(forecast,uncertainty = False,weekly_start=1)
         
 
-    #     st.plotly_chart(fig2,use_container_width=True)    
+        # st.plotly_chart(fig2,use_container_width=True)    
         
 
 

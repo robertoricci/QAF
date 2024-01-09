@@ -1,10 +1,14 @@
 import streamlit as st
-import style as style
-import app_home
-import app_carteira
-import app_bolsa_eleicoes
-import app_analise_tecnica
-import app_analise_fundamentalista
+import html_css.style as style
+import paginas.app_home as app_home
+import paginas.app_carteira as app_carteira
+import paginas.app_bolsa_eleicoes as app_bolsa_eleicoes
+import paginas.app_analise_tecnica as app_analise_tecnica
+import paginas.app_analise_fundamentalista as app_analise_fundamentalista
+import paginas.app_panorama_mercado as app_panorama_mercado
+import paginas.app_value_investing as app_value_investing
+import paginas.setores_ibov as setores_ibov
+import paginas.app_carteira as app_carteira
 import pandas as pd
 
 import matplotlib
@@ -27,6 +31,8 @@ st.set_page_config(  # Alternate names: setup_page, page, layout
 )
 
 
+###https://streamlit-emoji-shortcodes-streamlit-app-gwckff.streamlit.app/
+
 #carrega os arquivos css
 def local_css(file_name):
     with open(file_name) as f:
@@ -37,9 +43,13 @@ def main():
      
     pages={
          "Home":page_home,
+          "Mercado":page_panorama,
           "Eleições":page_bolsa_eleicoes,
           "Análise técnica":page_analise_tecnica,
-          "Análise Fundamentalista":page_analise_fundamentalista
+          "Análise Fundamentalista":page_analise_fundamentalista,
+          "Value Investing":page_value_investing,
+           "Setores Ibovespa":page_setores_ibov,
+           "Carteira":page_carteira,
     }
     
         #esconder botão de menu e marca dágua no rodapé
@@ -49,8 +59,8 @@ def main():
            
     with st.sidebar:
             style.sidebarwidth() 
-            page = option_menu('Menu', ["Home","Análise técnica","Análise Fundamentalista","Eleições"],
-                                icons=['house','bar-chart','bullseye','cash-coin'],
+            page = option_menu('Menu', ["Home","Mercado","Carteira","Análise técnica","Análise Fundamentalista","Value Investing","Eleições","Setores Ibovespa"],
+                                icons=['house','bar-chart','bullseye','cash-coin','cash','alarm'],
                                 default_index=0, menu_icon="app-indicator",   #orientation='horizontal',
                                 styles={
                 "container": {"padding": "2!important", "background-color": "#ffffff","margin": "0px" }, # ,"background-size": "cover","margin": "0px"},
@@ -76,21 +86,38 @@ def main():
 if 'portifolio' not in st.session_state:
         st.session_state.portifolio = pd.DataFrame()
         st.session_state.portifolio['Ação'] = ''
+
+if 'tabela_papeis' not in st.session_state: 
+    st.session_state.tabela_papeis = pd.DataFrame()    
+    st.session_state.tabela_papeis = pd.read_csv('tickers.csv',sep=',')
     
 def page_home():
      app_home.home()
 
 def page_analise_tecnica():
      app_analise_tecnica.analise_tecnica_fundamentalista()
+     
+def page_carteira():
+    app_carteira.main()   
 
 def page_analise_fundamentalista():
-    app_analise_fundamentalista.carregar_ativos()
+    app_analise_fundamentalista.main()
+    
+    
+def page_value_investing():
+    app_value_investing.main()
+
 
 def page_bolsa_eleicoes():
      st.session_state.tabela_papeis = puxar_tabela_papeis()
      app_bolsa_eleicoes.bolsa()
      
      
+def page_panorama():
+    app_panorama_mercado.main()
+     
+def page_setores_ibov():
+     setores_ibov.main()
 
 @st.cache
 def puxar_tabela_papeis():
