@@ -35,7 +35,7 @@ def main():
           
         with col1:  
                                       
-            st.title('Análise por Setores do IBOVESPA')
+            st.title('Análise por Setor do IBOVESPA')
             
             st.subheader('Dados extraido da B3')
             st.write('__________')

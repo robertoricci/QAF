@@ -7,7 +7,7 @@ import paginas.app_analise_tecnica as app_analise_tecnica
 import paginas.app_analise_fundamentalista as app_analise_fundamentalista
 import paginas.app_panorama_mercado as app_panorama_mercado
 import paginas.app_value_investing as app_value_investing
-import paginas.setores_ibov as setores_ibov
+import paginas.app_setores_ibov as app_setores_ibov
 import paginas.app_carteira as app_carteira
 import pandas as pd
 
@@ -117,7 +117,7 @@ def page_panorama():
     app_panorama_mercado.main()
      
 def page_setores_ibov():
-     setores_ibov.main()
+     app_setores_ibov.main()
 
 @st.cache
 def puxar_tabela_papeis():
