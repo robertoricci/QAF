@@ -85,4 +85,4 @@ pymongo
 SQLAlchemy
 mysql-connector-python
 mysqlclient
-
+beautifulsoup4

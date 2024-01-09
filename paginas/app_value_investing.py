@@ -14,8 +14,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import datetime as dt, timedelta
-import seaborn as sns
-import numpy as np
+##import seaborn as sns
+##import numpy as np
 
 @st.cache_data(show_spinner="Buscando dados fundamentalistas para ações.", ttl=3600)
 def busca_dados_acoes():
