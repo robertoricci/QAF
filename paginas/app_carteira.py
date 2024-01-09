@@ -5,7 +5,7 @@ import yfinance as yf
 #import time
 import matplotlib.pyplot as plt
 import plotly.express as px
-import seaborn as sns
+##import seaborn as sns
 #import datetime
 #from datetime import date
 import math
@@ -120,7 +120,7 @@ def botao_inserir():
       calc_porc_e_betapond()
 
   except:
-    st.error('Ops! Verifique as informações.')
+    st.error('Verifique as informações.')
 
 def botao_apagar_ultimo():
   st.session_state.portifolio.drop(st.session_state.portifolio.tail(1).index,inplace=True) # Apaga o ultimo registro do DataFrame
